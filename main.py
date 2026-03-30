@@ -3,4 +3,6 @@ def greet(name: str) -> str:
 
 
 if __name__ == "__main__":
-    print(greet("World"))
+    import sys
+    name = sys.argv[1] if len(sys.argv) > 1 else "World"
+    print(greet(name))
