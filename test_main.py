@@ -3,46 +3,35 @@ import pytest
 from greet import greet, greet_many
 
 
-def test_default():
-    assert greet("World") == "Hello, World!"
+@pytest.mark.parametrize(
+    "name, shout, farewell, expected",
+    [
+        ("World", False, False, "Hello, World!"),
+        ("alice", False, False, "Hello, Alice!"),
+        ("Alice", True, False, "HELLO, ALICE!"),
+        ("Alice", False, True, "Goodbye, Alice!"),
+        ("Alice", True, True, "GOODBYE, ALICE!"),
+    ],
+)
+def test_greet(name: str, shout: bool, farewell: bool, expected: str):
+    assert greet(name, shout=shout, farewell=farewell) == expected
 
 
-def test_capitalizes_name():
-    assert greet("alice") == "Hello, Alice!"
+@pytest.mark.parametrize(
+    "names, shout, expected",
+    [
+        (["Alice", "bob"], False, ["Hello, Alice!", "Hello, Bob!"]),
+        (["Alice"], True, ["HELLO, ALICE!"]),
+    ],
+)
+def test_greet_many(names: list, shout: bool, expected: list):
+    assert greet_many(names, shout=shout) == expected
 
 
-def test_shout():
-    assert greet("alice", shout=True) == "HELLO, ALICE!"
-
-
-def test_shout_default_is_false():
-    assert greet("Alice") == "Hello, Alice!"
-
-
-def test_farewell():
-    assert greet("Alice", farewell=True) == "Goodbye, Alice!"
-
-
-def test_farewell_and_shout():
-    assert greet("Alice", shout=True, farewell=True) == "GOODBYE, ALICE!"
-
-
-def test_greet_many():
-    assert greet_many(["Alice", "bob"]) == ["Hello, Alice!", "Hello, Bob!"]
-
-
-def test_greet_many_shout():
-    assert greet_many(["Alice"], shout=True) == ["HELLO, ALICE!"]
-
-
-def test_empty_name_raises():
+@pytest.mark.parametrize("name", ["", "   "])
+def test_empty_name_raises(name: str):
     with pytest.raises(ValueError):
-        greet("")
-
-
-def test_blank_name_raises():
-    with pytest.raises(ValueError):
-        greet("   ")
+        greet(name)
 
 
 def test_empty_list_raises():
