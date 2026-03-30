@@ -1,5 +1,5 @@
 import unittest
-from main import greet
+from main import greet, greet_many
 
 
 class TestGreet(unittest.TestCase):
@@ -20,6 +20,12 @@ class TestGreet(unittest.TestCase):
 
     def test_farewell_and_shout(self):
         self.assertEqual(greet("Alice", shout=True, farewell=True), "GOODBYE, ALICE!")
+
+    def test_greet_many(self):
+        self.assertEqual(greet_many(["Alice", "bob"]), ["Hello, Alice!", "Hello, Bob!"])
+
+    def test_greet_many_shout(self):
+        self.assertEqual(greet_many(["Alice"], shout=True), ["HELLO, ALICE!"])
 
 
 if __name__ == "__main__":
