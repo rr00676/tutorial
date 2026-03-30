@@ -1,4 +1,8 @@
+from rich.console import Console
+from rich.text import Text
 from greet import greet_many
+
+console = Console()
 
 if __name__ == "__main__":
     import argparse
@@ -8,4 +12,11 @@ if __name__ == "__main__":
     parser.add_argument("--farewell", action="store_true", help="Say goodbye instead of hello")
     args = parser.parse_args()
     for message in greet_many(args.name, args.shout, args.farewell):
-        print(message)
+        text = Text(message)
+        if args.shout:
+            text.stylize("bold red")
+        elif args.farewell:
+            text.stylize("bold yellow")
+        else:
+            text.stylize("bold green")
+        console.print(text)
