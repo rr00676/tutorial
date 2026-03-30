@@ -13,5 +13,9 @@ env/
 .DS_Store
 Thumbs.db
 
+# Database
+sales.db
+
 # Claude Code
 .claude/settings.local.json
+.mcp.json
