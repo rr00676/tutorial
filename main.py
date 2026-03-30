@@ -1,4 +1,5 @@
 import logging
+import sys
 from rich.console import Console
 from rich.text import Text
 from greet import greet_many
@@ -19,12 +20,16 @@ if __name__ == "__main__":
         format="%(levelname)s %(name)s: %(message)s"
     )
 
-    for message in greet_many(args.name, args.shout, args.farewell):
-        text = Text(message)
-        if args.shout:
-            text.stylize("bold red")
-        elif args.farewell:
-            text.stylize("bold yellow")
-        else:
-            text.stylize("bold green")
-        console.print(text)
+    try:
+        for message in greet_many(args.name, args.shout, args.farewell):
+            text = Text(message)
+            if args.shout:
+                text.stylize("bold red")
+            elif args.farewell:
+                text.stylize("bold yellow")
+            else:
+                text.stylize("bold green")
+            console.print(text)
+    except ValueError as e:
+        console.print(f"[bold red]Error:[/bold red] {e}")
+        sys.exit(1)

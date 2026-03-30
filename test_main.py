@@ -27,6 +27,18 @@ class TestGreet(unittest.TestCase):
     def test_greet_many_shout(self):
         self.assertEqual(greet_many(["Alice"], shout=True), ["HELLO, ALICE!"])
 
+    def test_empty_name_raises(self):
+        with self.assertRaises(ValueError):
+            greet("")
+
+    def test_blank_name_raises(self):
+        with self.assertRaises(ValueError):
+            greet("   ")
+
+    def test_empty_list_raises(self):
+        with self.assertRaises(ValueError):
+            greet_many([])
+
 
 if __name__ == "__main__":
     unittest.main()
