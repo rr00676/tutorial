@@ -3,6 +3,8 @@ def greet(name: str) -> str:
 
 
 if __name__ == "__main__":
-    import sys
-    name = sys.argv[1] if len(sys.argv) > 1 else "World"
-    print(greet(name))
+    import argparse
+    parser = argparse.ArgumentParser(description="Greet someone.")
+    parser.add_argument("--name", default="World", help="Name to greet")
+    args = parser.parse_args()
+    print(greet(args.name))
