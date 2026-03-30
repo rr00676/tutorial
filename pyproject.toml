@@ -1,0 +1,19 @@
+[project]
+name = "tutorial"
+version = "0.1.0"
+description = "A simple Python project for learning agentic coding workflows"
+requires-python = ">=3.13"
+dependencies = [
+    "rich>=14.0",
+]
+
+[project.scripts]
+greet = "main:main"
+
+[tool.mypy]
+strict = false
+files = ["greet.py", "main.py"]
+
+[tool.pytest.ini_options]
+testpaths = ["."]
+python_files = ["test_*.py"]

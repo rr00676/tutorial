@@ -17,6 +17,6 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Run type checks
-        run: mypy greet.py main.py
+        run: mypy
       - name: Run tests
         run: python -m unittest test_main.py -v
