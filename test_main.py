@@ -1,5 +1,5 @@
 import unittest
-from main import greet, greet_many
+from greet import greet, greet_many
 
 
 class TestGreet(unittest.TestCase):
