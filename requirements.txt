@@ -15,7 +15,7 @@ idna==3.11
 iniconfig==2.3.0
 jsonschema==4.26.0
 jsonschema-specifications==2025.9.1
-librt==0.8.1
+librt==0.8.1; sys_platform == "linux"
 markdown-it-py==4.0.0
 mcp==1.26.0
 mdurl==0.1.2
@@ -33,7 +33,7 @@ PyJWT==2.12.1
 pytest==9.0.2
 python-dotenv==1.2.2
 python-multipart==0.0.22
-pywin32==311
+pywin32==311; sys_platform == "win32"
 referencing==0.37.0
 rich==14.3.3
 rpds-py==0.30.0
