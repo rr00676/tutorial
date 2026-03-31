@@ -1,11 +1,26 @@
 import sqlite3
 
 from mcp.server.fastmcp import FastMCP
+from pydantic import BaseModel, Field
 
 from greet import greet, greet_many
 
 DB_PATH = "sales.db"
 mcp = FastMCP("tutorial-greeter")
+
+
+class TopSpender(BaseModel):
+    customer_name: str = Field(description="Full name of the customer")
+    city: str = Field(description="City the customer is based in")
+    total_spend: float = Field(description="Total amount spent across all orders, in dollars")
+    order_count: int = Field(description="Number of distinct orders placed")
+
+
+class CategorySales(BaseModel):
+    category: str = Field(description="Product category name")
+    total_revenue: float = Field(description="Total revenue from this category, in dollars")
+    units_sold: int = Field(description="Total units sold across all orders")
+    order_count: int = Field(description="Number of distinct orders containing this category")
 
 
 @mcp.tool()
@@ -51,11 +66,8 @@ def query(sql: str) -> list[dict]:
 
 
 @mcp.tool()
-def get_top_spenders(limit: int = 5, category: str | None = None) -> list[dict]:
-    """Return customers ranked by total spend, optionally filtered by product category.
-
-    Each result has: customer_name, city, total_spend, order_count.
-    """
+def get_top_spenders(limit: int = 5, category: str | None = None) -> list[TopSpender]:
+    """Return customers ranked by total spend, optionally filtered by product category."""
     if category is not None:
         sql = """
             SELECT c.name AS customer_name, c.city,
@@ -89,15 +101,12 @@ def get_top_spenders(limit: int = 5, category: str | None = None) -> list[dict]:
     conn.row_factory = sqlite3.Row
     rows = conn.execute(sql, params).fetchall()
     conn.close()
-    return [dict(row) for row in rows]
+    return [TopSpender(**dict(row)) for row in rows]
 
 
 @mcp.tool()
-def get_sales_by_category() -> list[dict]:
-    """Return total revenue and units sold, broken down by product category.
-
-    Each result has: category, total_revenue, units_sold, order_count.
-    """
+def get_sales_by_category() -> list[CategorySales]:
+    """Return total revenue and units sold, broken down by product category."""
     sql = """
         SELECT p.category,
                ROUND(SUM(oi.quantity * p.price), 2) AS total_revenue,
@@ -113,7 +122,7 @@ def get_sales_by_category() -> list[dict]:
     conn.row_factory = sqlite3.Row
     rows = conn.execute(sql).fetchall()
     conn.close()
-    return [dict(row) for row in rows]
+    return [CategorySales(**dict(row)) for row in rows]
 
 
 if __name__ == "__main__":
