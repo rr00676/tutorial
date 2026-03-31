@@ -50,5 +50,71 @@ def query(sql: str) -> list[dict]:
     return [dict(row) for row in rows]
 
 
+@mcp.tool()
+def get_top_spenders(limit: int = 5, category: str | None = None) -> list[dict]:
+    """Return customers ranked by total spend, optionally filtered by product category.
+
+    Each result has: customer_name, city, total_spend, order_count.
+    """
+    if category is not None:
+        sql = """
+            SELECT c.name AS customer_name, c.city,
+                   ROUND(SUM(oi.quantity * p.price), 2) AS total_spend,
+                   COUNT(DISTINCT o.id) AS order_count
+            FROM customers c
+            JOIN orders o ON o.customer_id = c.id
+            JOIN order_items oi ON oi.order_id = o.id
+            JOIN products p ON p.id = oi.product_id
+            WHERE p.category = ?
+            GROUP BY c.id
+            ORDER BY total_spend DESC
+            LIMIT ?
+        """
+        params: tuple = (category, limit)
+    else:
+        sql = """
+            SELECT c.name AS customer_name, c.city,
+                   ROUND(SUM(oi.quantity * p.price), 2) AS total_spend,
+                   COUNT(DISTINCT o.id) AS order_count
+            FROM customers c
+            JOIN orders o ON o.customer_id = c.id
+            JOIN order_items oi ON oi.order_id = o.id
+            JOIN products p ON p.id = oi.product_id
+            GROUP BY c.id
+            ORDER BY total_spend DESC
+            LIMIT ?
+        """
+        params = (limit,)
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    rows = conn.execute(sql, params).fetchall()
+    conn.close()
+    return [dict(row) for row in rows]
+
+
+@mcp.tool()
+def get_sales_by_category() -> list[dict]:
+    """Return total revenue and units sold, broken down by product category.
+
+    Each result has: category, total_revenue, units_sold, order_count.
+    """
+    sql = """
+        SELECT p.category,
+               ROUND(SUM(oi.quantity * p.price), 2) AS total_revenue,
+               SUM(oi.quantity) AS units_sold,
+               COUNT(DISTINCT o.id) AS order_count
+        FROM order_items oi
+        JOIN products p ON p.id = oi.product_id
+        JOIN orders o ON o.id = oi.order_id
+        GROUP BY p.category
+        ORDER BY total_revenue DESC
+    """
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    rows = conn.execute(sql).fetchall()
+    conn.close()
+    return [dict(row) for row in rows]
+
+
 if __name__ == "__main__":
     mcp.run()
