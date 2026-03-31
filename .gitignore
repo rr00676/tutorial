@@ -15,6 +15,7 @@ Thumbs.db
 
 # Database
 sales.db
+query_log.txt
 
 # Claude Code
 .claude/settings.local.json
